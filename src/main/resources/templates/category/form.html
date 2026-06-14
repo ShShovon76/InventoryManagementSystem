@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Category Form - Inventory Management</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2" th:text="${categoryId} ? 'Edit Category' : 'Create Category'">
+                    Category Form
+                </h1>
+            </div>
+
+            <div class="row fade-in">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <form th:action="${categoryId} ? @{/categories/edit/{id}(id=${categoryId})} : @{/categories/create}"
+                                  th:object="${category}" method="post">
+
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Category Name *</label>
+                                    <input type="text" class="form-control" id="name"
+                                           th:field="*{name}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}"
+                                         th:errors="*{name}">Name is required</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" rows="4"
+                                              th:field="*{description}"></textarea>
+                                    <small class="text-muted">Maximum 500 characters</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Category
+                                    </button>
+                                    <a th:href="@{/categories}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle"></i> Help
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Category Name:</strong> Should be unique and descriptive.</p>
+                            <p><strong>Description:</strong> Optional detailed information about the category.</p>
+                            <p><strong>Note:</strong> Categories with products cannot be deleted.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

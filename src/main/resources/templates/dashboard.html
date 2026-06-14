@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Dashboard - Inventory Management</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard</h1>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row fade-in">
+                <div class="col-md-3">
+                    <div class="dashboard-card text-center">
+                        <i class="fas fa-tags fa-3x" style="color: #667eea;"></i>
+                        <h3 th:text="${totalCategories}">0</h3>
+                        <p>Total Categories</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="dashboard-card text-center">
+                        <i class="fas fa-box fa-3x" style="color: #764ba2;"></i>
+                        <h3 th:text="${totalProducts}">0</h3>
+                        <p>Total Products</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="dashboard-card text-center">
+                        <i class="fas fa-warehouse fa-3x" style="color: #28a745;"></i>
+                        <h3 th:text="${totalInventory}">0</h3>
+                        <p>Inventory Items</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="dashboard-card text-center">
+                        <i class="fas fa-shopping-cart fa-3x" style="color: #ffc107;"></i>
+                        <h3 th:text="${totalOrders}">0</h3>
+                        <p>Total Orders</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Low Stock Alert -->
+            <div th:if="${lowStockItems > 0}" class="alert alert-warning fade-in mt-3">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Warning!</strong>
+                <span th:text="${lowStockItems}"></span> product(s) have low stock (less than 10 units).
+                <a th:href="@{/inventory}" class="alert-link">Check inventory now</a>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4 fade-in">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-bolt"></i> Quick Actions
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <a th:href="@{/categories/create}" class="btn btn-primary btn-block w-100 mb-2">
+                                        <i class="fas fa-plus"></i> Add Category
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a th:href="@{/products/create}" class="btn btn-success btn-block w-100 mb-2">
+                                        <i class="fas fa-plus"></i> Add Product
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a th:href="@{/inventory/create}" class="btn btn-info btn-block w-100 mb-2">
+                                        <i class="fas fa-plus"></i> Update Inventory
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a th:href="@{/orders/create}" class="btn btn-warning btn-block w-100 mb-2">
+                                        <i class="fas fa-shopping-cart"></i> Create Order
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

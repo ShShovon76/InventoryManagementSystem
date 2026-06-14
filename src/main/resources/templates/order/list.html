@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Orders - Management System</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Orders</h1>
+                <div>
+                    <a th:href="@{/orders/create}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Order
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="mb-3">
+                <div class="btn-group" role="group">
+                    <a th:href="@{/orders}" class="btn btn-outline-primary">All</a>
+                    <a th:href="@{/orders/status/PENDING}" class="btn btn-outline-warning">Pending</a>
+                    <a th:href="@{/orders/status/PROCESSING}" class="btn btn-outline-info">Processing</a>
+                    <a th:href="@{/orders/status/SHIPPED}" class="btn btn-outline-primary">Shipped</a>
+                    <a th:href="@{/orders/status/DELIVERED}" class="btn btn-outline-success">Delivered</a>
+                    <a th:href="@{/orders/status/CANCELLED}" class="btn btn-outline-danger">Cancelled</a>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Filter Info -->
+            <div th:if="${currentStatus}" class="alert alert-info">
+                Showing orders with status: <strong th:text="${currentStatus}"></strong>
+                <a th:href="@{/orders}" class="alert-link">Clear filter</a>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="table-responsive fade-in">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Products</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="${order.id}">1</td>
+                        <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">
+                            2024-01-01 10:00
+                        </td>
+                        <td th:text="${order.customerName}">John Doe</td>
+                        <td>
+                            <strong th:text="'$' + ${order.totalAmount}">$999.99</strong>
+                        </td>
+                        <td>
+                                    <span th:class="${order.orderStatus} == 'PENDING' ? 'badge bg-warning' :
+                                          (${order.orderStatus} == 'PROCESSING' ? 'badge bg-info' :
+                                          (${order.orderStatus} == 'SHIPPED' ? 'badge bg-primary' :
+                                          (${order.orderStatus} == 'DELIVERED' ? 'badge bg-success' : 'badge bg-danger')))"
+                                          th:text="${order.orderStatus}">PENDING</span>
+                        </td>
+                        <td>
+                                    <span class="badge bg-secondary" th:text="${order.products.size()} + ' items'">
+                                        3 items
+                                    </span>
+                        </td>
+                        <td>
+                            <a th:href="@{/orders/view/{id}(id=${order.id})}"
+                               class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <button type="button" class="btn btn-sm btn-primary"
+                                    data-bs-toggle="modal"
+                                    th:data-bs-target="'#statusModal' + ${order.id}">
+                                <i class="fas fa-sync-alt"></i> Status
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${orders.empty}">
+                        <td colspan="7" class="text-center">
+                            No orders found.
+                            <a th:href="@{/orders/create}">Create your first order</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Status Update Modals -->
+            <div th:each="order : ${orders}" th:remove="tag">
+                <div class="modal fade" th:id="'statusModal' + ${order.id}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Update Order #<span th:text="${order.id}"></span> Status</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form th:action="@{/orders/update-status/{id}(id=${order.id})}" method="post">
+                                <div class="modal-body">
+                                    <label class="form-label">Current Status: <strong th:text="${order.orderStatus}"></strong></label>
+                                    <select name="status" class="form-select mt-2" required>
+                                        <option value="PENDING">PENDING</option>
+                                        <option value="PROCESSING">PROCESSING</option>
+                                        <option value="SHIPPED">SHIPPED</option>
+                                        <option value="DELIVERED">DELIVERED</option>
+                                        <option value="CANCELLED">CANCELLED</option>
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Update Status</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

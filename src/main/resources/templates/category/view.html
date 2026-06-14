@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>View Category - Inventory Management</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Category Details</h1>
+                <div>
+                    <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a th:href="@{/categories}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+
+            <div class="row fade-in">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle"></i> Category Information
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th width="30%">ID:</th>
+                                    <td th:text="${category.id}">1</td>
+                                </tr>
+                                <tr>
+                                    <th>Name:</th>
+                                    <td th:text="${category.name}">Electronics</td>
+                                </tr>
+                                <tr>
+                                    <th>Description:</th>
+                                    <td th:text="${category.description}">Description here</td>
+                                </tr>
+                                <tr>
+                                    <th>Products Count:</th>
+                                    <td>
+                                        <span class="badge bg-info" th:text="${category.productCount}">0</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

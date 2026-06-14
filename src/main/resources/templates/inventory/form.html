@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Inventory Form - Management System</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2" th:text="${productId} ? 'Update Inventory' : 'Add Inventory'">
+                    Inventory Form
+                </h1>
+            </div>
+
+            <div class="row fade-in">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <form th:action="@{/inventory/create}" th:object="${inventory}" method="post">
+
+                                <div class="mb-3">
+                                    <label for="productId" class="form-label">Select Product *</label>
+                                    <select class="form-select" id="productId" th:field="*{productId}"
+                                            th:disabled="${productId != null}" required>
+                                        <option value="">Choose a product...</option>
+                                        <option th:each="product : ${products}"
+                                                th:value="${product.id}"
+                                                th:text="${product.name} + ' - $' + ${product.price}">
+                                        </option>
+                                    </select>
+                                    <small class="text-muted">Select the product to manage inventory</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="quantity" class="form-label">Quantity *</label>
+                                    <input type="number" class="form-control" id="quantity"
+                                           th:field="*{quantity}" required min="0">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('quantity')}"
+                                         th:errors="*{quantity}">Valid quantity is required</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Inventory
+                                    </button>
+                                    <a th:href="@{/inventory}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle"></i> Guidelines
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Stock Levels:</strong></p>
+                            <ul>
+                                <li><span class="badge bg-success">Healthy: >10 units</span></li>
+                                <li><span class="badge bg-warning">Low: 1-10 units</span></li>
+                                <li><span class="badge bg-danger">Out of Stock: 0 units</span></li>
+                            </ul>
+                            <p><strong>Note:</strong> Inventory is automatically tracked when orders are placed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

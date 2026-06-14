@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Order Details - Management System</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Order Details #<span th:text="${order.id}"></span></h1>
+                <div>
+                    <a th:href="@{/orders}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Orders
+                    </a>
+                </div>
+            </div>
+
+            <div class="row fade-in">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle"></i> Order Information
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th width="35%">Order ID:</th>
+                                    <td><strong th:text="${order.id}">1</strong></td>
+                                </tr>
+                                <tr>
+                                    <th>Order Date:</th>
+                                    <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}">
+                                        2024-01-01 10:00:00
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Customer Name:</th>
+                                    <td th:text="${order.customerName}">John Doe</td>
+                                </tr>
+                                <tr>
+                                    <th>Order Status:</th>
+                                    <td>
+                                            <span th:class="${order.orderStatus} == 'PENDING' ? 'badge bg-warning' :
+                                                  (${order.orderStatus} == 'PROCESSING' ? 'badge bg-info' :
+                                                  (${order.orderStatus} == 'SHIPPED' ? 'badge bg-primary' :
+                                                  (${order.orderStatus} == 'DELIVERED' ? 'badge bg-success' : 'badge bg-danger')))"
+                                                  th:text="${order.orderStatus}">PENDING</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Total Amount:</th>
+                                    <td>
+                                        <h4 class="text-success" th:text="'$' + ${order.totalAmount}">$999.99</h4>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Status Update Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-sync-alt"></i> Update Status
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/orders/update-status/{id}(id=${order.id})}" method="post" class="row">
+                                <div class="col-md-8">
+                                    <select name="status" class="form-select" required>
+                                        <option value="PENDING" th:selected="${order.orderStatus == 'PENDING'}">PENDING</option>
+                                        <option value="PROCESSING" th:selected="${order.orderStatus == 'PROCESSING'}">PROCESSING</option>
+                                        <option value="SHIPPED" th:selected="${order.orderStatus == 'SHIPPED'}">SHIPPED</option>
+                                        <option value="DELIVERED" th:selected="${order.orderStatus == 'DELIVERED'}">DELIVERED</option>
+                                        <option value="CANCELLED" th:selected="${order.orderStatus == 'CANCELLED'}">CANCELLED</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary w-100">Update Status</button>
+                                </div>
+                            </form>
+
+                            <div th:if="${order.orderStatus != 'CANCELLED' and order.orderStatus != 'DELIVERED'}" class="mt-3">
+                                <form th:action="@{/orders/cancel/{id}(id=${order.id})}" method="post">
+                                    <button type="submit" class="btn btn-danger w-100 delete-btn">
+                                        <i class="fas fa-times"></i> Cancel Order
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-boxes"></i> Products in Order
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Product ID</th>
+                                        <th>Product Name</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="product : ${order.products}">
+                                        <td th:text="${product.id}">1</td>
+                                        <td>
+                                            <a th:href="@{/products/view/{id}(id=${product.id})}"
+                                               th:text="${product.name}">Product Name</a>
+                                        </td>
+                                        <td th:text="'$' + ${product.price}">$99.99</td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr class="table-active">
+                                        <td colspan="2" class="text-end"><strong>Total:</strong></td>
+                                        <td><strong th:text="'$' + ${order.totalAmount}">$999.99</strong></td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

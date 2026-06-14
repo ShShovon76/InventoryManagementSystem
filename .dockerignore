@@ -1,5 +1,44 @@
+# Git
 .git
-.idea
-target/classes
-target/test-classes
+.gitignore
+
+# IDE
+.idea/
 *.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Build
+target/
+*.log
+*.tmp
+*.jar
+!.gitkeep
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Test
+src/test/
+
+# Documentation
+README.md
+*.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml

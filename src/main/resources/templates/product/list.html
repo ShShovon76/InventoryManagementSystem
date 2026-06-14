@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Products - Inventory Management</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Products</h1>
+                <div>
+                    <a th:href="@{/products/create}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Product
+                    </a>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search products by name, description, or category...">
+            </div>
+
+            <!-- Products Table -->
+            <div class="table-responsive fade-in">
+                <table class="table table-hover searchable-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${products}">
+                        <td th:text="${product.id}">1</td>
+                        <td th:text="${product.name}">Laptop</td>
+                        <td th:text="${product.description}">High performance laptop</td>
+                        <td>
+                            <span class="badge bg-success" th:text="'$' + ${product.price}">$999.99</span>
+                        </td>
+                        <td th:text="${product.category.name}">Electronics</td>
+                        <td>
+                                    <span th:if="${product.inventory != null && product.inventory.quantity > 10}"
+                                          class="badge bg-success" th:text="${product.inventory.quantity}">50</span>
+                            <span th:if="${product.inventory != null && product.inventory.quantity <= 10 && product.inventory.quantity > 0}"
+                                  class="badge bg-warning" th:text="${product.inventory.quantity}">5</span>
+                            <span th:if="${product.inventory == null || product.inventory.quantity == 0}"
+                                  class="badge bg-danger">Out of Stock</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/products/view/{id}(id=${product.id})}"
+                               class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a th:href="@{/products/edit/{id}(id=${product.id})}"
+                               class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{/products/delete/{id}(id=${product.id})}"
+                               class="btn btn-sm btn-danger delete-btn">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${products.empty}">
+                        <td colspan="7" class="text-center">No products found.
+                            <a th:href="@{/products/create}">Create one now</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

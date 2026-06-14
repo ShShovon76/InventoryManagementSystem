@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Categories - Inventory Management</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Categories</h1>
+                <div>
+                    <a th:href="@{/categories/create}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Category
+                    </a>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search categories...">
+            </div>
+
+            <!-- Categories Table -->
+            <div class="table-responsive fade-in">
+                <table class="table table-hover searchable-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Products Count</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="category : ${categories}">
+                        <td th:text="${category.id}">1</td>
+                        <td th:text="${category.name}">Electronics</td>
+                        <td th:text="${category.description}">Electronic devices</td>
+                        <td>
+                            <span class="badge bg-info" th:text="${category.productCount}">0</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/categories/view/{id}(id=${category.id})}"
+                               class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a th:href="@{/categories/edit/{id}(id=${category.id})}"
+                               class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a th:href="@{/categories/delete/{id}(id=${category.id})}"
+                               class="btn btn-sm btn-danger delete-btn">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${categories.empty}">
+                        <td colspan="5" class="text-center">No categories found.
+                            <a th:href="@{/categories/create}">Create one now</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Create Order - Management System</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Create New Order</h1>
+            </div>
+
+            <div class="row fade-in">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <form th:action="@{/orders/create}" th:object="${order}" method="post">
+
+                                <div class="mb-3">
+                                    <label for="customerName" class="form-label">Customer Name *</label>
+                                    <input type="text" class="form-control" id="customerName"
+                                           th:field="*{customerName}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('customerName')}"
+                                         th:errors="*{customerName}">Customer name is required</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="orderStatus" class="form-label">Order Status *</label>
+                                    <select class="form-select" id="orderStatus" th:field="*{orderStatus}" required>
+                                        <option th:each="status : ${orderStatuses}"
+                                                th:value="${status}"
+                                                th:text="${status}">
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Select Products *</label>
+                                    <div class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+                                        <div th:each="product : ${products}" class="form-check mb-2">
+                                            <input type="checkbox" class="form-check-input"
+                                                   th:name="productIds" th:value="${product.id}"
+                                                   th:id="'product' + ${product.id}">
+                                            <label class="form-check-label" th:for="'product' + ${product.id}">
+                                                <strong th:text="${product.name}"></strong> -
+                                                $<span th:text="${product.price}"></span>
+                                                <span th:if="${product.inventory != null}">
+                                                        (Stock: <span th:class="${product.inventory.quantity > 0} ? 'text-success' : 'text-danger'"
+                                                                      th:text="${product.inventory.quantity}">0</span>)
+                                                    </span>
+                                                <span th:if="${product.inventory == null}" class="text-danger">
+                                                        (No inventory)
+                                                    </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">Select one or more products for this order</small>
+                                    <div th:if="${#fields.hasErrors('productIds')}" class="text-danger"
+                                         th:errors="*{productIds}">At least one product is required</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-shopping-cart"></i> Create Order
+                                    </button>
+                                    <a th:href="@{/orders}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle"></i> Order Information
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Order Statuses:</strong></p>
+                            <ul>
+                                <li><span class="badge bg-warning">PENDING</span> - Order created, awaiting processing</li>
+                                <li><span class="badge bg-info">PROCESSING</span> - Order being prepared</li>
+                                <li><span class="badge bg-primary">SHIPPED</span> - Order shipped to customer</li>
+                                <li><span class="badge bg-success">DELIVERED</span> - Order delivered</li>
+                                <li><span class="badge bg-danger">CANCELLED</span> - Order cancelled</li>
+                            </ul>
+                            <p><strong>Note:</strong> Stock will be automatically deducted when order is created.</p>
+                            <p><strong>Total Amount:</strong> Automatically calculated based on selected products.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script>
+    // Calculate total amount dynamically (optional enhancement)
+    $(document).ready(function() {
+        $('input[name="productIds"]').change(function() {
+            let total = 0;
+            $('input[name="productIds"]:checked').each(function() {
+                // This would require product prices to be passed to frontend
+                // For simplicity, total is calculated on backend
+            });
+        });
+    });
+</script>
+</body>
+</html>

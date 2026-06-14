@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Inventory - Management System</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Inventory Management</h1>
+                <div>
+                    <a th:href="@{/inventory/create}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add/Update Inventory
+                    </a>
+                    <a th:href="@{/inventory/low-stock}" class="btn btn-warning">
+                        <i class="fas fa-exclamation-triangle"></i> Low Stock Items
+                    </a>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${lowStockAlert}" class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> Showing low stock items (quantity < 10)
+                <a th:href="@{/inventory}" class="alert-link">View all inventory</a>
+            </div>
+
+            <!-- Inventory Table -->
+            <div class="table-responsive fade-in">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Product Name</th>
+                        <th>Current Quantity</th>
+                        <th>Last Updated</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="inv : ${inventories}">
+                        <td th:text="${inv.id}">1</td>
+                        <td>
+                            <a th:href="@{/products/view/{id}(id=${inv.productId})}"
+                               th:text="${inv.productName}">Product Name</a>
+                        </td>
+                        <td>
+                                    <span th:class="${inv.quantity > 10} ? 'badge bg-success' :
+                                          (${inv.quantity > 0} ? 'badge bg-warning' : 'badge bg-danger')"
+                                          th:text="${inv.quantity}">50</span>
+                        </td>
+                        <td th:text="${#temporals.format(inv.lastUpdated, 'yyyy-MM-dd HH:mm:ss')}">
+                            2024-01-01 10:00:00
+                        </td>
+                        <td>
+                            <span th:if="${inv.quantity > 10}" class="badge bg-success">Healthy Stock</span>
+                            <span th:if="${inv.quantity <= 10 && inv.quantity > 0}" class="badge bg-warning">Low Stock</span>
+                            <span th:if="${inv.quantity == 0}" class="badge bg-danger">Out of Stock</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/inventory/edit/{id}(id=${inv.productId})}"
+                               class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Update
+                            </a>
+                            <a th:href="@{/inventory/delete/{id}(id=${inv.id})}"
+                               class="btn btn-sm btn-danger delete-btn">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${inventories.empty}">
+                        <td colspan="6" class="text-center">
+                            No inventory records found.
+                            <a th:href="@{/inventory/create}">Add inventory now</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Stock Summary -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Healthy Stock</h5>
+                            <h2 th:text="${inventories.?[quantity > 10].size()}">0</h2>
+                            <p class="card-text">Products with >10 units</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body">
+                            <h5 class="card-title">Low Stock</h5>
+                            <h2 th:text="${inventories.?[quantity <= 10 && quantity > 0].size()}">0</h2>
+                            <p class="card-text">Products with 1-10 units</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Out of Stock</h5>
+                            <h2 th:text="${inventories.?[quantity == 0].size()}">0</h2>
+                            <p class="card-text">Products with 0 units</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
